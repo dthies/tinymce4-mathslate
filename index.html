@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="http:./styles.css">
+    <script >// src="./tinymce/js/tinymce/tinymce.min.js">
+    </script>
+    <script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
+    <script>
+       if(typeof M === "undefined") M = {};
+       M.mathslateURL = M.mathslateURL || document.location + '/plugins/mathslate/';
+    </script>
+    <script src="./plugins/mathslate/plugin.min.js"></script>
+
+    <script type="text/javascript">
+        tinymce.init({
+            selector: "textarea",
+    theme: "modern",
+    width: 300,
+    height: 300,
+    plugins: [
+         "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+         "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+         "save table contextmenu directionality mathslate emoticons template paste textcolor"
+   ],
+   content_css: "css/content.css",
+   toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons mathslate", 
+   style_formats: [
+        {title: 'Bold text', inline: 'b'},
+        {title: 'Red text', inline: 'span', styles: {color: '#ff0000'}},
+        {title: 'Red header', block: 'h1', styles: {color: '#ff0000'}},
+        {title: 'Example 1', inline: 'span', classes: 'example1'},
+        {title: 'Example 2', inline: 'span', classes: 'example2'},
+        {title: 'Table styles'},
+        {title: 'Table row 1', selector: 'tr', classes: 'tablerow1'}
+    ]
+        });
+    </script>
+    </head>
+
+    <body>
+        <div>TinyMCE4 Editor with Mathslate Plugin<form method="post">
+    <textarea></textarea>
+</form></div>
+    </body>
+</html>
