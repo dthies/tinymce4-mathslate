@@ -9,7 +9,8 @@
     <script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
     <script>
        if(typeof M === "undefined") M = {};
-       M.mathslateURL = M.mathslateURL || document.location + '/plugins/mathslate/';
+       M.mathslateURL = M.mathslateURL || document.location.toString().replace(/\/[^/]*$/, '/plugins/mathslate/');
+       
     </script>
     <script src="./plugins/mathslate/plugin.min.js"></script>
 
@@ -17,7 +18,7 @@
         tinymce.init({
             selector: "textarea",
     theme: "modern",
-    width: 300,
+    width: 500,
     height: 300,
     plugins: [
          "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
