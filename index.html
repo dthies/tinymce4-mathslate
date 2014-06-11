@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<<<<<<< HEAD
 
   <head>
     <meta charset='utf-8' />
@@ -9,6 +10,39 @@
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
     <title>Tinymce4-mathslate</title>
+    <link rel="stylesheet" type="text/css" href="http:./styles.css">
+    <script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
+    <script>
+       if(typeof M === "undefined") M = {};
+       M.mathslateURL = M.mathslateURL || document.location.toString().replace(/\/[^/]*$/, '/plugins/mathslate/');
+       
+    </script>
+    <script src="./plugins/mathslate/plugin.min.js"></script>
+
+    <script type="text/javascript">
+        tinymce.init({
+            selector: "textarea",
+    theme: "modern",
+    width: 500,
+    height: 300,
+    plugins: [
+         "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+         "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+         "save table contextmenu directionality mathslate emoticons template paste textcolor"
+   ],
+   content_css: "css/content.css",
+   toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons mathslate", 
+   style_formats: [
+        {title: 'Bold text', inline: 'b'},
+        {title: 'Red text', inline: 'span', styles: {color: '#ff0000'}},
+        {title: 'Red header', block: 'h1', styles: {color: '#ff0000'}},
+        {title: 'Example 1', inline: 'span', classes: 'example1'},
+        {title: 'Example 2', inline: 'span', classes: 'example2'},
+        {title: 'Table styles'},
+        {title: 'Table row 1', selector: 'tr', classes: 'tablerow1'}
+    ]
+        });
+    </script>
   </head>
 
   <body>
@@ -34,15 +68,19 @@
         <h1>
 <a name="tinymce4-mathslate" class="anchor" href="#tinymce4-mathslate"><span class="octicon octicon-link"></span></a>tinymce4-mathslate</h1>
 
-<p>This is the Mathslate editor adapted as a standard plugin for TinyMCE4. In
-order to install Mathslate into a local installation of TinyMCE4, copy
+<p>This is the Mathslate editor adapted as a standard plugin for <a href="http://tinymce.com">TinyMCE4</a>. In
+order to add Mathslate into a local installation of TinyMCE4, copy
 plugins/mathslate to tinymce/js/tinymce/plugins/mathslate.  Otherwise you
 may run TinyMCE4 from CDN by copying this directory to a web server. </p>
 
 <p>Mathslate is licensed is copyright 2014 by Daniel Thies <a href="mailto:dthies@ccal.edu">dthies@ccal.edu</a>
-and licensed under GPL version 3. Mathslate was originally developed
-for use in the Moodle platform.  These files are a crude adaptation from
+and licensed under <a href="LICENSE">GPL version 3</a>. Mathslate was originally developed for use in the <a href="http://moodle.org">Moodle platform</a> using <a href="http://mathjax.org">MathJax</a> for rendering mathematics.  These files are a crude adaptation from
 the Moodle TinyMCE plugin.</p>
+<p> Try the Mathslate Plugin in theTinyMCE4 Editor here. Use the <img src="./plugins/mathslate/img/mathslate.png"> button on the toolbar or <code>Insert Math</code> in the menu to create a TeX expression.</p>
+    <textarea></textarea>
+</form></p>
+    
+
       </section>
     </div>
 
@@ -53,8 +91,6 @@ the Moodle TinyMCE plugin.</p>
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-
-    
 
   </body>
 </html>
