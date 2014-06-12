@@ -66,16 +66,12 @@
     }
 }
 
-.mathslate-tinymce {
-}
-
 .mathslate-tinymce .mathslate-workspace {
     margin: 0px;
     background-color: #333; 
     color: #EEE; 
     height: 100px;
     line-height: 100px;
-    padding-top: 10px;
     vertical-align: middle;
     text-align: center;
     border: solid #666 6px;
@@ -89,7 +85,8 @@ color: #888
 }
 
 .mathslate-tinymce .yui3-tabview-panel p {
-padding: 1px
+padding-bottom: 0px,
+padding-bottom: 1px
 }
 
 .mathslate-tinymce .mathslate-toolbox .yui3-tabview-panel {
