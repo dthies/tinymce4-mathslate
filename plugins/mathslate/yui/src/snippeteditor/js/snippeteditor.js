@@ -92,7 +92,7 @@ NS.mSlots= function(){
                         findBlank(a);
                     }
                     else if(a==='[]') {
-                        var newID=Y.guid();
+                        var newID='MJX-'+Y.guid();
                         slots.push([['mi',{id: newID, "class": 'blank', tex: ['']},'\u25FB']]);
                         snippet[2][snippet[2].indexOf(a)]=['mrow',{},slots[slots.length-1]];
                     }
@@ -207,7 +207,7 @@ NS.mSlots= function(){
                 s.forEach(function(m){
                     if(!m[1]) {return;}
                     if(m[1]['class']&&m[1]['class']==='blank'&&s.length>1) {buffer.removeSnippet(m[1].id);}
-                    if(m[1].id) {m[1].id=Y.guid();}
+                    if(m[1].id) {m[1].id='MJX-'+Y.guid();}
                 });
             }
             
