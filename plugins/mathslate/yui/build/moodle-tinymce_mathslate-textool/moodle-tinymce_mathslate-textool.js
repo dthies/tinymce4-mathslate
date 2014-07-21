@@ -39,14 +39,24 @@ NS.TeXTool=function(editorID,addMath){
         this.get('node').setStyle('top' , '0');
         this.get('node').setStyle('left' , '0');
     });
+    tool.toMathML = function(callback) {
+        var mml;
+        var jax = MathJax.Hub.getAllJax(this.generateID())[0];
+        try {
+            mml = jax.root.toMathML("");
+        } catch(err) {
+            if (!err.restart) {throw err;} // an actual error
+            return MathJax.Callback.After([toMathML,jax,callback],err.restart);
+        }
+        MathJax.Callback(callback)(mml);
+    };
     input.on ('change',function(){
         var jax = MathJax.Hub.getAllJax(tool.generateID())[0];
-        MathJax.Hub.Queue(['Text',jax,input.getDOMNode().value]);
-        MathJax.Hub.Queue(["Typeset",MathJax.Hub,tool.generateID()]);
-
+        if (!jax) {return;}
         var snippet;
-        function findSnippet() {
-            var mml = MathJax.Hub.getAllJax(tool.generateID())[0].root.toMathML();
+        MathJax.Hub.Queue(['Text',jax,this.getDOMNode().value]);
+        MathJax.Hub.Queue(["Typeset",MathJax.Hub,tool.generateID()]);
+        function findSnippet(mml) {
             mml = mml.replace(/.*<math xmlns=\"http:\/\/www.w3.org\/1998\/Math\/MathML\" display=\"block\">\s*/,'[').replace(/\s*<\/math.*/,']');
             if (/<mtext mathcolor="red">/.test(mml)||/<merror/.test(mml)) {
                 console.log(mml);
@@ -88,7 +98,7 @@ NS.TeXTool=function(editorID,addMath){
             }
             snippet=[Y.JSON.parse(snippet)];
         }
-        MathJax.Hub.Queue(findSnippet);
+        MathJax.Hub.Queue(['toMathML',tool,findSnippet]);
 
         MathJax.Hub.Queue(function(){
             drag.set('data',tool.json);

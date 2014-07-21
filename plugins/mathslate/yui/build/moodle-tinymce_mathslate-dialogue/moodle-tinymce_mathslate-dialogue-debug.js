@@ -71,6 +71,13 @@ var NS=M.tinymce_mathslate;
 
         var cancel=Y.one('#'+editorID).appendChild(Y.Node.create('<button title="'+M.util.get_string('cancel_desc','tinymce_mathslate')+'">'
             +M.util.get_string('cancel','tinymce_mathslate')+'</button>'));
+        cancel.on('click',function(){
+            tinyMCEPopup.close();
+        });
+        if(typeof MathJax === 'undefined'){
+            return;
+        }
+
         var displayTex=Y.one('#'+editorID).appendChild(Y.Node.create('<button title="'
             +M.util.get_string('display_desc','tinymce_mathslate')+'">'
             +M.util.get_string('display','tinymce_mathslate')+'</button>'));
@@ -93,13 +100,8 @@ var NS=M.tinymce_mathslate;
             tinyMCEPopup.editor.execCommand('mceInsertContent', false,  '\\('+me.output('tex')+'\\)');
             tinyMCEPopup.close();
             });
-        cancel.on('click',function(){
-            tinyMCEPopup.close();
-            });
             
-        if(MathJax){
-            MathJax.Hub.Queue(['Typeset',MathJax.Hub,me.node.generateID()]);
-        }
+        MathJax.Hub.Queue(['Typeset',MathJax.Hub,me.node.generateID()]);
 
         M.tinymce_mathslate.dialogue = dialogue;
         

@@ -148,11 +148,12 @@ NS.MathJaxEditor=function(id){
                     if(selectedNode.one('#'+this.getAttribute('id'))){
                         return;
                     }
-                    if(node.one('#'+selectedNode.getAttribute('id'))){
-                        return;
-                    }
+                    //if(node.one('#'+selectedNode.getAttribute('id'))){
+                    //    return;
+                    //}
                     e.stopPropagation();
-                    se.insertSnippet(selectedNode.getAttribute('id'), se.removeSnippet(node.getAttribute('id')));
+                    //se.insertSnippet(selectedNode.getAttribute('id'), se.removeSnippet(node.getAttribute('id')));
+                    se.insertSnippet(node.getAttribute('id'), se.removeSnippet(selectedNode.getAttribute('id')));
                     render();
                 };
                 node.on('click',function(e) {
