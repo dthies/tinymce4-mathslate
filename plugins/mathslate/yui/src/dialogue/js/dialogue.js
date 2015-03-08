@@ -22,7 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 M.tinymce_mathslate = M.tinymce_mathslate || {};
-var NS=M.tinymce_mathslate;
+var CSS = {
+   EDITOR: 'mathslate-tinymce'
+};
+var NS = M.tinymce_mathslate;
     /**
      * The window used to hold the editor.
      *
@@ -59,47 +62,50 @@ var NS=M.tinymce_mathslate;
      */
 
     NS.init = function(params) {
-        M.tinymce_mathslate=M.tinymce_mathslate||{};
-        M.tinymce_mathslate.config=params.config||M.tinymce_mathslate.config;
-        M.tinymce_mathslate.help=params.help||M.tinymce_mathslate.help;
-        var dialogue = Y.one('#'+params.elementid);
+        M.tinymce_mathslate = M.tinymce_mathslate || {};
+        M.tinymce_mathslate.config = params.config || M.tinymce_mathslate.config;
+        M.tinymce_mathslate.help = params.help || M.tinymce_mathslate.help;
+        var dialogue = Y.one('#' + params.elementid);
         
-        var editorID=dialogue.one('.mathslate-container').generateID();
-        var me=new M.tinymce_mathslate.Editor('#'+editorID,M.tinymce_mathslate.config);
+        var editorID = dialogue.one('.mathslate-container').generateID();
+        Y.one('#' + editorID).addClass(CSS.EDITOR);
+        var me = new M.tinymce_mathslate.Editor('#' + editorID, M.tinymce_mathslate.config);
 
-        var cancel=Y.one('#'+editorID).appendChild(Y.Node.create('<button title="'+M.util.get_string('cancel_desc','tinymce_mathslate')+'">'
-            +M.util.get_string('cancel','tinymce_mathslate')+'</button>'));
-        cancel.on('click',function(){
-            tinyMCEPopup.close();
+        var cancel = Y.one('#' + editorID).appendChild(Y.Node.create('<button title="'
+            + M.util.get_string('cancel_desc', 'tinymce_mathslate') + '">'
+            + M.util.get_string('cancel', 'tinymce_mathslate') + '</button>'));
+        cancel.on('click', function() {
+            window.tinyMCEPopup.close();
         });
-        if(typeof MathJax === 'undefined'){
+        if (typeof MathJax === 'undefined') {
             return;
         }
 
-        var displayTex=Y.one('#'+editorID).appendChild(Y.Node.create('<button title="'
-            +M.util.get_string('display_desc','tinymce_mathslate')+'">'
-            +M.util.get_string('display','tinymce_mathslate')+'</button>'));
-        var inlineTex=Y.one('#'+editorID).appendChild(Y.Node.create('<button title="'+M.util.get_string('inline_desc','tinymce_mathslate')+'">'
-            +M.util.get_string('inline','tinymce_mathslate')+'</button>'));
+        var displayTex = Y.one('#' + editorID).appendChild(Y.Node.create('<button title="'
+            + M.util.get_string('display_desc', 'tinymce_mathslate') + '">'
+            + M.util.get_string('display', 'tinymce_mathslate') + '</button>'));
+        var inlineTex = Y.one('#' + editorID).appendChild(Y.Node.create('<button title="'
+            + M.util.get_string('inline_desc', 'tinymce_mathslate') + '">'
+            + M.util.get_string('inline', 'tinymce_mathslate') + '</button>'));
 
 /* This code shows a button to saves work as JSON that can be incorporated in config.json.
-        var saveJSON=Y.one('#'+editorID).appendChild(Y.Node.create('<button title="'+'JSON'+'">'
-            +'JSON'+'</button>'));
-        saveJSON.on('click',function(){
-            tinyMCEPopup.editor.execCommand('mceInsertContent', false, me.output('JSON'));
-            tinyMCEPopup.close();
+        var saveJSON = Y.one('#' + editorID).appendChild(Y.Node.create('<button title="' + 'JSON' + '">'
+            + 'JSON' + '</button>'));
+        saveJSON.on('click', function() {
+            window.tinyMCEPopup.editor.execCommand('mceInsertContent', false, me.output('JSON'));
+            window.tinyMCEPopup.close();
             });
 */
-        displayTex.on('click',function(){
-            tinyMCEPopup.editor.execCommand('mceInsertContent', false,  '\\['+me.output('tex')+'\\]');
-            tinyMCEPopup.close();
+        displayTex.on('click', function() {
+            window.tinyMCEPopup.editor.execCommand('mceInsertContent', false,  '\\[' + me.output('tex') + '\\]');
+            window.tinyMCEPopup.close();
             });
-        inlineTex.on('click',function(){
-            tinyMCEPopup.editor.execCommand('mceInsertContent', false,  '\\('+me.output('tex')+'\\)');
-            tinyMCEPopup.close();
+        inlineTex.on('click', function() {
+            window.tinyMCEPopup.editor.execCommand('mceInsertContent', false,  '\\(' + me.output('tex') + '\\)');
+            window.tinyMCEPopup.close();
             });
             
-        MathJax.Hub.Queue(['Typeset',MathJax.Hub,me.node.generateID()]);
+        window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub, me.node.generateID()]);
 
         M.tinymce_mathslate.dialogue = dialogue;
         
