@@ -52,7 +52,7 @@ NS.Editor = function(editorID, config, params) {
     this.node.setHTML('<div id="' + toolboxID + '" class="' + CSS.TOOLBOX + '">'
             + '<div style="background-color: white; color: green; height: 300px; line-height: 75px; '
             + 'font-size: 18px; text-align:center"><br />Mathslate Mathematics Editor<br />'
-            + 'Version 1.1 RC</div><script type="math/tex">\\quad</script><math> <mo> </mo></math></div>'
+            + 'Version 1.1</div><script type="math/tex">\\quad</script><math> <mo> </mo></math></div>'
             + '<div id="' + workID + '" ></div>');
 
     var mje = new NS.MathJaxEditor('#' + workID);
