@@ -13,14 +13,14 @@ YUI.add('moodle-tinymce_mathslate-editor', function (Y, NAME) {
  * Text editor mathslate plugin.
  *
  * @package    tinymce_mathslate
- * @copyright  2013 Daniel Thies  <dthies@ccal.edu>
+ * @copyright  2013-4 Daniel Thies  <dthies@ccal.edu>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (M) {M.tinymce_mathslate = M.tinymce_mathslate || {};}
 var NS = M && M.tinymce_mathslate || {};
+var MathJax = window.MathJax;
 var CSS = {
-   EDITOR: 'mathslate-tinymce',
    TOOLBOX: 'mathslate-toolbox',
    DRAGNODE: 'mathslate-toolbox-drag',
    UNDO: 'mathslate-undo-button',
@@ -33,155 +33,204 @@ var CSS = {
  * @param string editorID
  * @param string config
  */
-NS.Editor=function(editorID,config){
-    var me=this;
-    this.node=Y.one(editorID);
-    this.node.setHTML(M.util.get_string('nomathjax','tinymce_mathslate'));
-    if(typeof MathJax === 'undefined'){
+NS.Editor = function(editorID, config, params) {
+    params = params || {texInput: true};
+    var me = this;
+    this.node = Y.one(editorID);
+    this.node.setHTML(M.util.get_string('nomathjax', 'tinymce_mathslate'));
+    if (typeof MathJax === 'undefined') {
         return;
     }
-    //Set MathJax to us HTML-CSS rendering on all browsers
-    MathJax.Hub.setRenderer('HTML-CSS');
-    var toolboxID=Y.guid();
-    var workID=Y.guid();
+    // Disable CHTML preview in MathJax 2.5+
+    MathJax.Hub.processSectionDelay = 0;
+
+    var toolboxID = Y.guid();
+    var latexToolID = Y.guid();
+    var workID = Y.guid();
     this.node.addClass(CSS.EDITOR);
     //Place math editor on page
-    this.node.setHTML('<div id="' +toolboxID +'" class="'+CSS.TOOLBOX+'">'
-            + '<div style="background-color: white; color: green; height: 300px; line-height: 75px; font-size: 18px; text-align:center"><br />Mathslate Mathematics Editor<br />'
-            + 'v. 1.0RC1</div><script type="math/tex">\\quad</script><math> <mo> </mo></math></div>'
-            + '<div id="' +workID +'" ></div>');
+    this.node.setHTML('<div id="' + toolboxID + '" class="' + CSS.TOOLBOX + '">'
+            + '<div style="background-color: white; color: green; height: 300px; line-height: 75px; '
+            + 'font-size: 18px; text-align:center"><br />Mathslate Mathematics Editor<br />'
+            + 'Version 1.1</div><script type="math/tex">\\quad</script><math> <mo> </mo></math></div>'
+            + '<div id="' + workID + '" ></div>');
 
-    var tbox={tools: [],
-        fillToolBox: function(tools){
-        function Tool(snippet) {
+    var mje = new NS.MathJaxEditor('#' + workID);
+    var tbox = {
+        tools: [],
+        Tool: function(snippet) {
             function findBlank(snippet) {
                 if (Array.isArray(snippet[2])) {
-                    snippet[2].forEach(function(a){
+                    snippet[2].forEach(function(a) {
                     if (Array.isArray(a)) {
                             findBlank(a);
                         }
-                        else if(a==='[]') {
-                        newID=Y.guid();
-                        snippet[2][snippet[2].indexOf(a)]=['mn',{},'[]'];
+                        else if (a === '[]') {
+                        snippet[2][snippet[2].indexOf(a)] = ['mn', {}, '[]'];
                         }
                     });
                 }
             }
-            this.id=Y.guid();
+            this.id = Y.guid();
 
-            function title(s){
-                if(typeof s==='string'){return s;}
-                if(s[1]==='undefined'){return '';}
-                var o='';
-                if(typeof s[1].tex!=='undefined'){
-                    s[1].tex.forEach(function(t){
-                         if(typeof t==='string'){o+=t;}
-                         else {o+=title(s[2][t]);}
+            function title(s) {
+                if (typeof s === 'string') {
+                    return s;
+                }
+                if (typeof s[1] === 'undefined') {
+                    return '';
+                }
+                var o = '';
+                if (typeof s[1].tex !== 'undefined') {
+                    s[1].tex.forEach(function(t) {
+                        if (typeof t === 'string') {
+                            o += t;
+                        }
+                        else {
+                            o += title(s[2][t]);
+                        }
                     });
                     return o;
                 }
-                if(typeof s[2]==='string'){return s[2];}
-                if(typeof s[2]==='undefined'){return '';}
-                s[2].forEach(function(t){o+=title(t);});
+                if (typeof s[2] === 'string') {
+                    return s[2];
+                }
+                if (typeof s[2] === 'undefined') {
+                    return '';
+                }
+                s[2].forEach(function(t) {
+                    o += title(t);
+                });
                 return o;
             }
-            this.json=JSON.stringify(snippet);
-            this.HTMLsnippet=[['span', {id: this.id, title: title(snippet)}, [['math', {}, [snippet]]]]];
+            this.json = JSON.stringify(snippet);
+            this.HTMLsnippet = [['span', {id: this.id, title: title(snippet)}, [['math', {}, [snippet]]]]];
 
             findBlank(snippet);
             tbox.tools.push(this);
-        }
-        var tabs={children: []};
+        },
+        /* Initialyze the available tools
+         * @function fillToolBox
+         * @array tools tool array
+         */
+        fillToolBox: function(tools, toolboxID) {
+            var tabs = {children: []};
+            var tabview;
             MathJax.Hub.Register.StartupHook('TeX Jax Config', function() {
+                if (!params.texInput) {
+                    return;
+                }
                 MathJax.Ajax.Require("[MathJax]/extensions/toMathML.js");
                 tabs.children.push({
                     label: "<span title=\"TeX\"><math><mi>T</mi><mspace width=\"-.14em\"/>"
-                        +"<mpadded height=\"-.5ex\" depth=\"+.5ex\" voffset=\"-.5ex\">"
-                        +"<mrow class=\"MJX-TeXAtom-ORD\"><mi>E</mi></mrow></mpadded>"
-                        +"<mspace width=\"-.115em\" /> <mi>X</mi> </math></span>",
-                    content: "<span id='latex-input'></span>"
+                        + "<mpadded height=\"-.5ex\" depth=\"+.5ex\" voffset=\"-.5ex\">"
+                        + "<mrow class=\"MJX-TeXAtom-ORD\"><mi>E</mi></mrow></mpadded>"
+                        + "<mspace width=\"-.115em\" /> <mi>X</mi> </math></span>",
+                    content: "<span id='" + latexToolID + "'></span>"
                 });
             });
             MathJax.Hub.Register.StartupHook('End', function() {
-                tools.forEach(function(tab){
-                    var q=Y.Node.create('<p></p>');
-                    tab.tools.forEach(function(snippet){
-                        var t = new Tool(snippet);
-                        MathJax.HTML.addElement(q.getDOMNode(),'span',{},t.HTMLsnippet);
-                        if(snippet[0]&&snippet[0]!=='br'){
-                            q.append('&thinsp; &thinsp;');}
-                        });
+                tools.forEach(function(tab) {
+                    var q = Y.Node.create('<p></p>');
+                    tab.tools.forEach(function(snippet) {
+                        if (snippet[0] && snippet[0] === 'br') {
+                            q.append('<br />');
+                            return;
+                        }
+                        var t = new tbox.Tool(snippet);
+                        q.append('<span> ' + mje.toMathML(t.HTMLsnippet) + ' </span>');
+                    });
                     tabs.children.push({label: tab.label, content: q.getHTML()});
                 });
-                var tabview = new Y.TabView(
+                tabview = new Y.TabView(
                     tabs
                 );
-                var mje=new NS.MathJaxEditor('#'+workID);
 
-                me.output = function(f){return mje.output(f);};
+                me.output = function(f) {return mje.output(f);};
 
-                mje.canvas.on('drop:hit',function(e){
-                    if(e.drag.get('data')) {
-                        mje.addMath(e.drag.get('data'));
-                    }
-                });
-
-                if (Y.one('#'+toolboxID)) {
-                    Y.one('#'+toolboxID).setHTML('');
-                    tabview.render('#'+toolboxID);
-                    if (Y.one('#latex-input')) {
-                        new NS.TeXTool('#latex-input',function(json){mje.addMath(json);});
+                if (Y.one('#' + toolboxID)) {
+                    Y.one('#' + toolboxID).setHTML('');
+                    tabview.render('#' + toolboxID);
+                    if (Y.one('#' + latexToolID)) {
+                        new NS.TeXTool('#' + latexToolID, function(json) {mje.addMath(json);});
                     }
                 }
-                /* function passed to MathJax to initiate dragging after math is formated
-                 * @function makeToolsDraggable
-                 */
-                function makeToolsDraggable(){
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, toolboxID]);
+                MathJax.Hub.Queue(function () {
                     tbox.tools.forEach(function(tool) {
-                        Y.one('#'+tool.id).on('click',function(){
-                            mje.addMath(tool.json);
-                        });
-                        var d=new Y.DD.Drag({node: '#'+tool.id});
-                        d.set('data',tool.json);
-                        d.on('drag:start', function() {
-                            this.get('dragNode').addClass(CSS.DRAGNODE);
-                        });
-                        d.on('drag:end', function() {
-                            this.get('node').setStyle('top' , '0');
-                            this.get('node').setStyle('left' , '0');
-                            this.get('node').removeClass(CSS.DRAGNODE);
-                        });
+                        if(Y.one('#' + toolboxID) && Y.one('#' + toolboxID).one('#' + tool.id)) {
+                            tbox.registerTool(tool);
+                        }
                     });
-                }
-                MathJax.Hub.Queue(["Typeset",MathJax.Hub,toolboxID]);
-                MathJax.Hub.Queue(makeToolsDraggable);
+                });
             });
-        //});
-
-    },
-        getToolByID: function(id){
-        var t;
-        this.tools.forEach(function(tool){
-            if(tool.id){ if(tool.id===id) {t=tool;}}
-        });
-        return t;
-    }
+        return tabview;
+        },
+        /* Return a tool array for a give id
+         * @function getToolByID
+         * @string id
+         */
+        getToolByID: function(id) {
+            var t;
+            this.tools.forEach(function(tool) {
+                if (tool.id) {
+                    if (tool.id === id) {
+                        t = tool;
+                    }
+                }
+            });
+            return t;
+        },
+        /* Enable drag functionality after math is formated
+         * @function registerTool
+         * @array tool Array of objects representing the tools appearance in MathML
+         */
+        registerTool: function(tool) {
+            if (!Y.one('#' + tool.id)) {
+                return;
+            }
+            var d = new Y.DD.Drag({node: '#' + tool.id});
+            d.set('data', tool.json);
+            d.on('drag:start', function() {
+                this.get('dragNode').addClass(CSS.DRAGNODE);
+            });
+            d.on('drag:end', function() {
+                this.get('node').setStyle('top' , '0');
+                this.get('node').setStyle('left' , '0');
+                this.get('node').removeClass(CSS.DRAGNODE);
+            });
+        }
     };
 
 
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub,toolboxID]);
+    MathJax.Hub.Queue(['Typeset', MathJax.Hub, toolboxID]);
 
     //Fetch configuration string for tools and initialyze
-    Y.on('io:success',function(id,o){
-        if(tbox.tools.length===0) {
-            MathJax.Hub.Queue(['fillToolBox',tbox,Y.JSON.parse(o.response)]);
+    var request;
+    Y.on('io:success', function(id, o) {
+        if (request.id === id) {
+            MathJax.Hub.Queue(['fillToolBox', tbox, Y.JSON.parse(o.response), toolboxID]);
         }
     });
-    if(config===undefined) {
-        Y.io(NS.config);
+    if (config === undefined) {
+        request = Y.io(NS.config);
     } else {
-        Y.io(config);
+        request = Y.io(config);
     }
+    this.tbox = tbox;
+    this.mje = mje;
+    mje.canvas.on('drop:hit', function(e) {
+        if (e.drag.get('data')) {
+            mje.addMath(e.drag.get('data'));
+        }
+    });
+    Y.one('#' + toolboxID).delegate('click', function() {
+       var tool = tbox.getToolByID(this.getAttribute('id'));
+       if (tool) {
+           mje.addMath(tool.json);
+       }
+    }, 'span .yui3-dd-draggable');
+
 };
 
 

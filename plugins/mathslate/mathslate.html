@@ -42,6 +42,7 @@ M.tinymce_mathslate.help="http:./help.html";
 YUI().use('moodle-tinymce_mathslate-editor','moodle-tinymce_mathslate-textool', function (Y) {
 MathJax.Hub.Queue(['Typeset',MathJax.Hub]);
 var editor = new M.tinymce_mathslate.Editor('#editor',"http:./config.json");
+Y.one('#editor').addClass('mathslate-tinymce');
 var mathEditor = top.tinymce.activeEditor.windowManager.getParams();
 mathEditor.output = function(format) { return editor.output(format); }
 });

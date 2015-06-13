@@ -1,5 +1,8 @@
 {
   "moodle-tinymce_mathslate-mathjaxeditor" : {
-      "requires" : ["moodle-tinymce_mathslate-snippeteditor", "dd-proxy", "dd-drop" ]
+      "requires" : [
+          "moodle-tinymce_mathslate-snippeteditor",
+          "dd-drop"
+      ]
   }
 }
