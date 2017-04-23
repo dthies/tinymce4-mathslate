@@ -4,14 +4,14 @@
  * MathSlate editor popup.
  *
  * @package   tinymcefour_mathslate
- * @copyright 2013 Daniel Thies
+ * @copyright onward 2013 Daniel Thies
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  -->
 
 <script src="http://yui.yahooapis.com/3.14.1/build/yui/yui-min.js"></script>
-<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<link rel="stylesheet" type="text/css" href="http:./styles.css">
+<link rel="stylesheet" type="text/css" href="styles.css">
 <script>
 // Create a YUI sandbox on your page.
 YUI().use('node', 'event', function (Y) {
@@ -23,14 +23,14 @@ YUI().use('node', 'event', function (Y) {
 if (typeof M === "undefined") M={};
 M.util=M.util||{};
 M.util.image_url=M.util.image_url||function(image,module){
-    return 'http:'+(module=='tinymce_mathslate'?'./pix/':'../../pix/')+image+'.svg';
+    return (module=='tinymce_mathslate'?'./pix/':'../../pix/')+image+'.svg';
 }
 M.util.get_string = function(image,module){
-    return 'http:'+(module=='tinymce_mathslate'?'./pix/':'../../pix/')+image+'.svg';
+    return (module=='tinymce_mathslate'?'./pix/':'../../pix/')+image+'.svg';
 }
 M.tinymce_mathslate=M.tinymce_mathslate||{};
-M.tinymce_mathslate.config="http:./config.json";
-M.tinymce_mathslate.help="http:./help.html";
+M.tinymce_mathslate.config="config.json";
+M.tinymce_mathslate.help="help.html";
 </script>
 <script src="./strings.js"></script>
 <script src="./yui/build/moodle-tinymce_mathslate-snippeteditor/moodle-tinymce_mathslate-snippeteditor-debug.js"> </script>
@@ -41,7 +41,7 @@ M.tinymce_mathslate.help="http:./help.html";
 <script>
 YUI().use('moodle-tinymce_mathslate-editor','moodle-tinymce_mathslate-textool', function (Y) {
 MathJax.Hub.Queue(['Typeset',MathJax.Hub]);
-var editor = new M.tinymce_mathslate.Editor('#editor',"http:./config.json");
+var editor = new M.tinymce_mathslate.Editor('#editor',"config.json");
 Y.one('#editor').addClass('mathslate-tinymce');
 var mathEditor = top.tinymce.activeEditor.windowManager.getParams();
 mathEditor.output = function(format) { return editor.output(format); }
